@@ -6,7 +6,7 @@ from tqdm import tqdm
 import numpy as np
 import torch
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-
+from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, classification_report, cohen_kappa_score
 
 class Evaluator:
     def __init__(self, params, data_loader):
@@ -48,6 +48,8 @@ class Evaluator:
         n2_f1 = f1_score(truths==2, preds==2)
         n3_f1 = f1_score(truths==3, preds==3)
         rem_f1 = f1_score(truths==4, preds==4)
+        kappa = cohen_kappa_score(truths, preds)
+        class_names = ['Wake', 'N1', 'N2', 'N3', 'REM']
+        report = classification_report(truths, preds, target_names=class_names)
+        return acc, f1, cm, wake_f1, n1_f1, n2_f1, n3_f1, rem_f1, kappa, report
 
-
-        return acc, f1, cm, wake_f1, n1_f1, n2_f1, n3_f1, rem_f1

@@ -33,8 +33,8 @@ label2class = {
     3: 'N3',
     4: 'REM',
 }
-font1 = {'family': 'Times New Roman'}
-matplotlib.rc("font", **font1)
+#font1 = {'family': 'Times New Roman'}
+#matplotlib.rc("font", **font1)
 class Visualization(object):
     def __init__(self, params):
         self.params = params
@@ -44,7 +44,18 @@ class Visualization(object):
         self.test_eval = Evaluator(params, self.data_loader['test'])
 
         self.model = Model(params).cuda()
-        self.model.load_state_dict(torch.load(self.params.model_path, map_location='cpu'))
+        from collections import OrderedDict
+
+        state_dict = torch.load(self.params.model_path, map_location='cpu')
+
+        # 2. 创建一个新的 OrderedDict 来存储没有 'module.' 前缀的权重
+        new_state_dict = OrderedDict()
+        for k, v in state_dict.items():
+            name = k[7:] if k.startswith('module.') else k  # 移除 'module.' 前缀
+            new_state_dict[name] = v
+
+        # 3. 加载修正后的 state_dict
+        self.model.load_state_dict(new_state_dict)
         print(self.model)
 
     def visualize(self):
@@ -58,7 +69,7 @@ class Visualization(object):
             x = x.cuda()
             y = y.cuda()
             z = z.cuda()
-            pred, recon, mu = self.model(x)
+            pred, recon, mu, _, _ = self.model(x, labels=y, domain_ids=z)
             # print(seq_features.shape)
             feats = mu.view(-1, 512)
             feats_list.append(feats.detach().cpu().numpy())
@@ -150,7 +161,7 @@ class Visualization(object):
             x = x.cuda()
             y = y.cuda()
             z = z.cuda()
-            pred, recon, mu = self.model(x)
+            pred, recon, mu, _, _ = self.model(x, labels=y, domain_ids=z)
             bz = z.shape[0]
             seqs_list.append(mu.detach().cpu().numpy())
             domains_list.append(z.detach().cpu().numpy())
@@ -162,7 +173,7 @@ class Visualization(object):
             x = x.cuda()
             y = y.cuda()
             z = z.cuda()
-            pred, recon, mu = self.model(x)
+            pred, recon, mu, _, _ = self.model(x, labels=y, domain_ids=z)
             bz = z.shape[0]
             seqs_list.append(mu.detach().cpu().numpy())
             domains_list.append(z.detach().cpu().numpy())

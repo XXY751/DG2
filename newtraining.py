@@ -126,6 +126,7 @@ class Trainer(object):
             f.write(msg + "\n")
 
     def train(self):
+        self._log_txt(f"===== [START] Training for Target Domain: {self.params.target_domains} =====")
         acc_best = 0.0
         f1_best = 0.0
         best_f1_epoch = 0
@@ -180,7 +181,7 @@ class Trainer(object):
             with torch.no_grad():
                 model_to_eval = self.model.module if isinstance(self.model, nn.DataParallel) else self.model
                 model_to_eval.freeze_unified_projection(strategy="avg")
-                acc, f1, cm, wake_f1, n1_f1, n2_f1, n3_f1, rem_f1 = self.val_eval.get_accuracy(self.model)
+                acc, f1, cm, wake_f1, n1_f1, n2_f1, n3_f1, rem_f1, _, _ = self.val_eval.get_accuracy(self.model)
 
             # 日志 + CSV
             msg = (f"Epoch {epoch+1:03d} | train_loss={np.mean(losses):.5f} | "
@@ -225,15 +226,20 @@ class Trainer(object):
             model_to_test.freeze_unified_projection(strategy="avg")
             self._log_txt("*************************** Test ***************************")
             test_acc, test_f1, test_cm, test_wake_f1, test_n1_f1, test_n2_f1, \
-                test_n3_f1, test_rem_f1 = self.test_eval.get_accuracy(self.model)
+                test_n3_f1, test_rem_f1, test_kappa, test_report = self.test_eval.get_accuracy(self.model)
 
+            # --- 在现有日志后增加新指标的打印 ---
             self._log_txt(f"Test: acc={test_acc:.5f}, f1={test_f1:.5f}")
+            self._log_txt(f"Cohen's Kappa: {test_kappa:.5f}")  # <-- 新增
             self._log_txt(str(test_cm))
             self._log_txt(
                 ("Class F1 -> "
                  f"wake={test_wake_f1:.5f}, n1={test_n1_f1:.5f}, n2={test_n2_f1:.5f}, "
                  f"n3={test_n3_f1:.5f}, rem={test_rem_f1:.5f}")
             )
+
+            # --- 在末尾打印完整的分类报告 ---
+            self._log_txt("\nClassification Report:\n" + str(test_report))  # <-- 新增
 
             # 保存模型（带指标）
             model_path = self.fold_dir / (

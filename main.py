@@ -59,8 +59,8 @@ def build_argparser():
     parser = argparse.ArgumentParser(description='SleepDG Runner (multi-target driver)')
 
     # ==== 基础训练参数 ====
-    parser.add_argument('--epochs', type=int, default=1, help='number of epochs')
-    parser.add_argument('--batch_size', type=int, default=1024, help='batch size for training')
+    parser.add_argument('--epochs', type=int, default=200, help='number of epochs')
+    parser.add_argument('--batch_size', type=int, default=512, help='batch size for training')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
     parser.add_argument('--clip_value', type=float, default=1.0, help='gradient clip value')
     parser.add_argument('--dropout', type=float, default=0.1, help='dropout')
@@ -79,7 +79,7 @@ def build_argparser():
     parser.add_argument('--results_root', type=str, default='results', help='根结果目录（会自动加时间戳子目录）')
 
     # ==== 训练控制：数据抽样比例 ====
-    parser.add_argument('--data_ratio', type=float, default=0.01,
+    parser.add_argument('--data_ratio', type=float, default=1,
                         help='训练集采样比例 (0,1]；例如 0.1 表示只用 10% 训练数据加速调试')
     parser.add_argument('--eval_ratio', type=float, default=1.0,
                         help='验证/测试集采样比例 (0,1]；一般保持 1.0，不建议减少（目前 Trainer 仅使用 data_ratio）')
@@ -93,11 +93,11 @@ def build_argparser():
     parser.add_argument('--lowrank_rank', type=int, default=32)
     parser.add_argument('--enable_stats_alignment', type=int, default=1)
     parser.add_argument('--anchor_momentum', type=float, default=0.9)
-    parser.add_argument('--lambda_caa', type=float, default=1.0)
+    parser.add_argument('--lambda_caa', type=float, default=0.7)
     parser.add_argument('--lambda_stat', type=float, default=0.2)
     parser.add_argument('--lambda_Areg', type=float, default=0.1)
     parser.add_argument('--lambda_ae', type=float, default=1.0)
-    parser.add_argument('--lambda_coral', type=float, default=0.0)
+    parser.add_argument('--lambda_coral', type=float, default=1.0)
     parser.add_argument('--num_domains', type=int, default=4)
 
     # ==== per-target 参数（会在循环里覆盖 default）====
