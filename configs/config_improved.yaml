@@ -1,0 +1,47 @@
+# configs/config_improved.yaml
+# Configuration for the improved SleepDG-1 model
+
+model_version: improved # 指定加载哪个版本的代码
+
+run_name: "sleepdg_improved_run"
+results_root: "./results" # 结果保存的根目录
+
+# === 设备与种子 ===
+seed: 443
+gpus: "0,1,2,3" # 指定使用的GPU
+
+# === 数据集 ===
+datasets_dir: '/data/lijinyang/1_sleep/datasets_dir'
+target_domains: 'sleep-edfx'
+num_workers: 16
+
+# === 训练参数 ===
+epochs: 200
+batch_size: 512
+lr: 0.001
+clip_value: 1.0
+label_smoothing: 0.1
+loss_function: 'CrossEntropyLoss'
+
+# === 模型参数 ===
+model_type: 'LDP_CAA_Model' # 改进模型的标识
+num_of_classes: 5
+dropout: 0.1
+# LDP 参数
+projection_type: 'diag' # or 'lowrank'
+lowrank_rank: 32
+# CAA 参数
+enable_stats_alignment: 1 # 1 表示 True
+anchor_momentum: 0.9
+# 损失权重
+lambda_caa: 0.3
+lambda_stat: 0.2
+lambda_Areg: 0.1
+lambda_ae: 1.0
+lambda_coral: 0.0 # 改进版似乎未使用 CORAL
+
+num_domains: 4 # 源域数量
+
+# === 训练控制 ===
+data_ratio: 1.0 # 使用全部训练数据
+eval_ratio: 1.0 # 使用全部验证/测试数据

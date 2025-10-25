@@ -1,3 +1,37 @@
+
+
+
+
+
+python main.py --config configs/config_improved.yaml
+
+
+python main.py --config configs/config_original.yaml
+
+
+python main.py --config configs/config_improved.yaml
+
+
+
+
+
+python analyze_dataset.py --datasets_dir /data/lijinyang/1_sleep/datasets_dir --plot_combined_data
+
+python analyze_dataset.py --datasets_dir /data/lijinyang/1_sleep/datasets_dir --plot_tsne --plot_limit 10000
+
+
+pip install matplotlib scikit-learn numpy tqdm
+2.  运行新脚本，并添加 `--plot_tsne` 标志：
+```bash
+python analyze_dataset_v3.py --datasets_dir /path/to/your/datasets --plot_tsne
+3.  （可选）如果您想绘制更多（或更少）的点：
+```bash
+python analyze_dataset_v3.py --datasets_dir /path/to/your/datasets --plot_tsne --plot_limit 10000
+
+
+
+
+
 # SleepDG
 #### The code of the paper "Generalizable Sleep Staging via Multi-Level Domain Alignment" in AAAI-2024.
 #### You should read the paper in https://arxiv.org/abs/2401.05363 for the newest version of the paper.

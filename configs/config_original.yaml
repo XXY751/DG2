@@ -1,0 +1,44 @@
+# configs/config_original.yaml
+# Configuration for the original SleepDG model
+
+model_version: original # 指定加载哪个版本的代码
+
+run_name: "sleepdg_original_run"
+results_root: "./results" # 结果保存的根目录
+
+# === 设备与种子 ===
+seed: 443
+gpus: "0,1,2" # 指定使用的GPU，例如 "0,1" 或 "" 表示 CPU
+
+# === 数据集 ===
+datasets_dir: '/data/lijinyang/1_sleep/datasets_dir' # !! 修改为你的数据集路径 !!
+target_domains: 'sleep-edfx' # 默认目标域，可在 LODO 循环中覆盖
+num_workers: 8
+
+# === 训练参数 ===
+epochs: 200
+batch_size: 256
+lr: 0.001
+clip_value: 1.0
+label_smoothing: 0.1
+loss_function: 'CrossEntropyLoss' # CrossEntropyLoss 是 PyTorch 内置的
+
+# === 模型参数 ===
+model_type: 'AE_Classifier' # 原始模型的标识
+num_of_classes: 5
+dropout: 0.1
+# 原始模型可能没有这些 LDP/CAA 参数，但可以保留以兼容 Trainer 结构
+projection_type: 'none' # 表示不使用 LDP
+lowrank_rank: 32
+enable_stats_alignment: 0 # 0 表示 False
+anchor_momentum: 0.9
+lambda_coral: 1.0 # 原始模型使用的损失权重
+lambda_ae: 1.0    # 原始模型使用的损失权重
+lambda_caa: 0.0    # 原始模型不使用
+lambda_stat: 0.0   # 原始模型不使用
+lambda_Areg: 0.0   # 原始模型不使用
+num_domains: 4 # 源域数量
+
+# === 训练控制 ===
+data_ratio: 0.01 # 使用全部训练数据
+eval_ratio: 0.01 # 使用全部验证/测试数据

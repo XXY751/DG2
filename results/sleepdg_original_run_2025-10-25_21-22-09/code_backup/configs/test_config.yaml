@@ -1,0 +1,36 @@
+# test_config.yaml
+# --- 核心测试配置 ---
+model_version: improved        # 要测试的模型版本 ('original' 或 'improved')
+results_log_dir: 'results/sleepdg_improved_run_2024xxxx_xxxxxx/fold0' # !! 修改 !! 指向包含 .pth 文件的 *具体某次训练* 的日志文件夹 (例如 fold0 或 fold1 等)
+test_dataset: 'SHHS1'         # !! 修改 !! 指定要进行预测的独立数据集名称
+
+# --- 设备与种子 ---
+seed: 42
+gpus: "0"                   # 指定测试时使用的 GPU 编号，例如 "0" 或 "0,1"。空字符串 "" 表示使用 CPU。
+
+# --- 数据加载 ---
+datasets_dir: '/path/to/your/datasets_dir' # !! 修改 !! 你的预处理数据集根目录
+batch_size: 256             # 测试时可以使用较大的批次大小以加快速度
+num_workers: 8              # 数据加载进程数，根据你的机器内存和 CPU 核心数调整
+
+# --- 模型架构参数 (必须与加载的权重对应的训练配置完全一致) ---
+model_type: 'LDP_CAA_Model' # 模型的标识符 (应与训练时使用的标识符一致)
+num_of_classes: 5           # 类别数量
+dropout: 0.1                # Dropout 比率
+
+# --- 以下参数主要影响模型结构，必须和训练时保持一致 ---
+# 如果 model_version 是 'improved'，需要提供 LDP/CAA 相关参数
+projection_type: 'diag'     # 域投影类型 ('diag' 或 'lowrank')
+lowrank_rank: 32            # 低秩投影的秩 (如果 projection_type='lowrank')
+enable_stats_alignment: 1   # 是否启用统计对齐 (1=启用, 0=禁用)
+anchor_momentum: 0.9        # 锚点更新的动量因子
+
+# **重要**: num_domains 在测试时通常不直接使用，但模型初始化可能需要此参数。
+# 这里设置的值应与加载权重的那次 *训练时* 使用的源域数量一致。
+# 例如，如果训练时使用了 4 个源域进行 LODO (留一法交叉验证)，则这里应设置为 4。
+num_domains: 4              # 假设原始训练时有 4 个源域
+
+# --- Evaluator 可能需要的参数 (通常在测试时不需要标签平滑) ---
+# label_smoothing: 0.0 # 测试时一般不需要设置
+
+# --- (注意) lambda_xxx 损失权重在测试时不使用，无需配置 ---

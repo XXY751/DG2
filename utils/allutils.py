@@ -41,7 +41,9 @@ def save_json(d: dict, path: Path):
     ensure_dir(path.parent)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(d, f, ensure_ascii=False, indent=2)
-
+def _now() -> str:  # <-- 添加这个函数
+    """获取 'YYYY-MM-DD HH:MM:SS' 格式的当前时间字符串"""
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 # =========================
 # Metrics 计算
 # =========================
